@@ -1,7 +1,7 @@
 package services
 
 import (
-	"go-rest-api-2/models"
+	"github.com/arifintahu/go-rest-api/models"
 
 	"github.com/palantir/stacktrace"
 )

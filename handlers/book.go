@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"go-rest-api-2/services"
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/arifintahu/go-rest-api/services"
 
 	"github.com/gorilla/mux"
 )

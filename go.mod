@@ -1,4 +1,4 @@
-module go-rest-api-2
+module github.com/arifintahu/go-rest-api
 
 go 1.18
 

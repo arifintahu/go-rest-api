@@ -1,10 +1,11 @@
 package main
 
 import (
-	"go-rest-api-2/handlers"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/arifintahu/go-rest-api/handlers"
 
 	"github.com/gorilla/mux"
 	"github.com/unrolled/render"

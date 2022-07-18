@@ -9,7 +9,7 @@ import (
 type AppEnv struct {
 	Logger *log.Logger
 	Render *render.Render
-	Env string
+	Server string
 	Port string
 	AppName string
 }

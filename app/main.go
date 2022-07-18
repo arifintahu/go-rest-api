@@ -26,7 +26,7 @@ func StartServer(appEnv config.AppEnv) {
 	var isDevelopment = false
 	const LOCAL string = "LOCAL"
 
-	if appEnv.Env == LOCAL {
+	if appEnv.Server == LOCAL {
 		isDevelopment = true
 	}
 
@@ -52,10 +52,10 @@ func StartServer(appEnv config.AppEnv) {
 	n.UseHandler(router)
 	startupMessage := "===> Starting app "+ appEnv.AppName +""
 	startupMessage = startupMessage + " on port " + appEnv.Port
-	startupMessage = startupMessage + " in " + appEnv.Env + " mode."
+	startupMessage = startupMessage + " in " + appEnv.Server + " mode."
 	appEnv.Logger.Println(startupMessage)
 
-	if appEnv.Env == LOCAL {
+	if appEnv.Server == LOCAL {
 		n.Run("localhost:" + appEnv.Port)
 	} else {
 		n.Run(":" + appEnv.Port)

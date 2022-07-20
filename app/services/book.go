@@ -42,7 +42,7 @@ func (service *BookService) ListBooks() ([]models.Book, error) {
 	return list, nil
 }
 
-func (service *BookService) GetBook(ID int) (models.Book, error) {
+func (service *BookService) GetBook(ID uint64) (models.Book, error) {
 	var book models.Book
 	for _, v := range bookList {
 		if v.ID == ID {

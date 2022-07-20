@@ -25,7 +25,7 @@ func ListBooks(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 
 func GetBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+	id, _ := strconv.ParseUint(vars["id"], 10, 32)
 	book, err := bookService.GetBook(id)
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err != nil {

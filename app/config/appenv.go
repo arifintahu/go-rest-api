@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/unrolled/render"
+	"gorm.io/gorm"
 )
 
 type AppEnv struct {
@@ -12,4 +13,5 @@ type AppEnv struct {
 	Server string
 	Port string
 	AppName string
+	DB *gorm.DB
 }

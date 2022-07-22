@@ -2,11 +2,13 @@ package services
 
 import (
 	"github.com/arifintahu/go-rest-api/app/models"
-
 	"github.com/palantir/stacktrace"
+	"gorm.io/gorm"
 )
 
-type BookService struct {}
+type BookService struct {
+	DB *gorm.DB
+}
 
 //Apply interface BookStorage
 var _ models.BookStorage = (*BookService)(nil)
@@ -30,28 +32,32 @@ var bookList = []*models.Book{
 	},
 }
 
-func (service *BookService) ListBooks() ([]models.Book, error) {
-	var list []models.Book
-	for _,v := range bookList {
-		list = append(list, *v)
+func (service *BookService) ListBooks() (*[]models.Book, error) {
+	books := []models.Book{}
+	err := service.DB.
+			Model(&models.Book{}).
+			Limit(100).
+			Find(&books).
+			Error
+
+	if err != nil {
+		return &[]models.Book{}, stacktrace.NewError("Cannot get books")
 	}
 
-	if len(list) == 0 {
-		return []models.Book{}, stacktrace.NewError("List books not found")
-	}
-	return list, nil
+	return &books, nil
 }
 
-func (service *BookService) GetBook(ID uint64) (models.Book, error) {
-	var book models.Book
-	for _, v := range bookList {
-		if v.ID == ID {
-			book = *v
-			break
-		}
+func (service *BookService) GetBook(ID uint64) (*models.Book, error) {
+	book := models.Book{}
+	err := service.DB.
+			Model(&models.Book{}).
+			Where("id = ?", ID).
+			Take(&book).
+			Error
+
+	if err != nil {
+		return &models.Book{}, stacktrace.NewError("Cannot find a book")
 	}
-	if book.ID != ID {
-		return models.Book{}, stacktrace.NewError("Cannot find a book")
-	}
-	return book, nil
+
+	return &book, nil
 }

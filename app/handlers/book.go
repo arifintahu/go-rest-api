@@ -6,12 +6,9 @@ import (
 	"strconv"
 
 	"github.com/arifintahu/go-rest-api/app/config"
-	"github.com/arifintahu/go-rest-api/app/services"
 
 	"github.com/gorilla/mux"
 )
-
-var bookService *services.BookService
 
 func ListBooks(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 	list, err := bookService.ListBooks()

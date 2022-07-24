@@ -42,3 +42,15 @@ func (repo *BookRepository) GetBook(ID uint64) (*models.Book, error) {
 
 	return &book, nil
 }
+
+func (repo *BookRepository) AddBook(book *models.Book) (error) {
+	err := repo.DB.
+			Create(book).
+			Error
+
+	if err != nil {
+		return stacktrace.NewError("Cannot add new book")
+	}
+
+	return nil
+}

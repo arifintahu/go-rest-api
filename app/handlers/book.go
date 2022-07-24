@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
 	"github.com/arifintahu/go-rest-api/app/config"
+	"github.com/arifintahu/go-rest-api/app/models"
 
 	"github.com/gorilla/mux"
 )
@@ -24,5 +27,25 @@ func GetBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 	if err != nil {
 		HandleError(rw, http.StatusNotFound, err)
 	}
+	appEnv.Render.JSON(rw, http.StatusOK, book)
+}
+
+func AddBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		HandleError(rw, http.StatusUnprocessableEntity, err)
+	}
+
+	book := models.Book{}
+	err = json.Unmarshal(body, &book)
+	if err != nil {
+		HandleError(rw, http.StatusUnprocessableEntity, err)
+	}
+
+	err = bookRepository.AddBook(&book)
+	if err != nil {
+		HandleError(rw, http.StatusUnprocessableEntity, err)
+	}
+
 	appEnv.Render.JSON(rw, http.StatusOK, book)
 }

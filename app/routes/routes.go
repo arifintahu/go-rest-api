@@ -12,7 +12,8 @@ type Route struct {
 type Routes []Route
 
 var RouteList = Routes{
-	Route{"PingConnection", "GET", "/", handlers.HealthCheck},
+	Route{"HealthCheck", "GET", "/", handlers.HealthCheck},
+	Route{"AddBook", "POST", "/books", handlers.AddBook},
 	Route{"ListBooks", "GET", "/books", handlers.ListBooks},
 	Route{"GetBook", "GET", "/books/{id}", handlers.GetBook},
 }

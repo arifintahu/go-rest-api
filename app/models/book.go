@@ -20,7 +20,7 @@ type Book struct {
 type BookStorage interface {
 	ListBooks() (*[]Book, error)
 	GetBook(id uint64) (*Book, error)
-	// AddBook(book Book) (Book, error)
+	AddBook(book *Book) (error)
 	// UpdateBook(book Book) (Book, error)
 	// DeleteBook(id int) error
 }

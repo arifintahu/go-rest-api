@@ -1,4 +1,4 @@
-package seed
+package migrate
 
 import (
 	"github.com/arifintahu/go-rest-api/app/models"
@@ -22,17 +22,21 @@ var books = []models.Book{
 	},
 }
 
+func Seed(db *gorm.DB) error {
+	for i, _ := range books {
+		err := db.Debug().Model(&models.Book{}).Create(&books[i]).Error
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func Load(db *gorm.DB) error {
 	err := db.Debug().AutoMigrate(&models.Book{})
 	if err != nil {
 		return err
-	}
-
-	for i, _ := range books {
-		err = db.Debug().Model(&models.Book{}).Create(&books[i]).Error
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

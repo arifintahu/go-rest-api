@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/arifintahu/go-rest-api/app/database"
-	"github.com/arifintahu/go-rest-api/app/database/seed"
+	"github.com/arifintahu/go-rest-api/app/database/migrate"
 	"github.com/joho/godotenv"
 )
 
@@ -30,9 +30,16 @@ func main() {
 		log.Fatal("Error initializing database connection")
 	}
 
-	err = seed.Load(db)
+	err = migrate.Load(db)
 	if err != nil {
-		log.Fatalf("Error seeder: %v", err)
+		log.Fatalf("Error migrate: %v", err)
+	}
+
+	if (os.Getenv("DB_SEED") == "true") {
+		err = migrate.Seed(db)
+		if err != nil {
+			log.Fatalf("Error seeder: %v", err)
+		}
 	}
 
 	sqlDB, err := db.DB()

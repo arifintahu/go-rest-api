@@ -11,6 +11,8 @@ import (
 	"github.com/urfave/negroni"
 )
 
+const LOCAL string = "LOCAL"
+
 func StartServer(appEnv config.AppEnv) {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes.RouteList {
@@ -24,7 +26,6 @@ func StartServer(appEnv config.AppEnv) {
 	}
 
 	var isDevelopment = false
-	const LOCAL string = "LOCAL"
 
 	if appEnv.Server == LOCAL {
 		isDevelopment = true

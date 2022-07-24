@@ -5,15 +5,15 @@ import (
 	"net/http"
 
 	"github.com/arifintahu/go-rest-api/app/config"
-	"github.com/arifintahu/go-rest-api/app/services"
+	"github.com/arifintahu/go-rest-api/app/repositories"
 )
 
 type HandlerFunc func(http.ResponseWriter, *http.Request, config.AppEnv)
 
-var bookService *services.BookService
+var bookRepository *repositories.BookRepository
 
 func MakeHandler(appEnv config.AppEnv, fn func(http.ResponseWriter, *http.Request, config.AppEnv)) http.HandlerFunc {
-	bookService = &services.BookService{
+	bookRepository = &repositories.BookRepository{
 		DB: appEnv.DB,
 	}
 	

@@ -11,7 +11,7 @@ import (
 )
 
 func ListBooks(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
-	list, err := bookService.ListBooks()
+	list, err := bookRepository.ListBooks()
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err != nil {
 		io.WriteString(rw, err.Error())
@@ -23,7 +23,7 @@ func ListBooks(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 func GetBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 	vars := mux.Vars(r)
 	id, _ := strconv.ParseUint(vars["id"], 10, 32)
-	book, err := bookService.GetBook(id)
+	book, err := bookRepository.GetBook(id)
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err != nil {
 		io.WriteString(rw, err.Error())

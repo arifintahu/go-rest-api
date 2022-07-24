@@ -23,8 +23,13 @@ func MakeHandler(appEnv config.AppEnv, fn func(http.ResponseWriter, *http.Reques
 	}
 }
 
-func PingConnection(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
-	appEnv.Logger.Println("Handler: pingConnection")
+func HandleError(rw http.ResponseWriter, status int, err error) {
+	io.WriteString(rw, err.Error())
+	rw.WriteHeader(status)
+	return
+}
+
+func HealthCheck(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 	io.WriteString(rw, "OK")
 	rw.WriteHeader(http.StatusOK)
 }

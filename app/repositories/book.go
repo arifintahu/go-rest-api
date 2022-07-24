@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"time"
+
 	"github.com/arifintahu/go-rest-api/app/models"
 	"github.com/palantir/stacktrace"
 	"gorm.io/gorm"
@@ -50,6 +52,47 @@ func (repo *BookRepository) AddBook(book *models.Book) (error) {
 
 	if err != nil {
 		return stacktrace.NewError("Cannot add new book")
+	}
+
+	return nil
+}
+
+func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *models.Book) (error) {
+	book := models.Book{}
+	err := repo.DB.
+			Model(&models.Book{}).
+			Where("id = ?", ID).
+			Take(&book).
+			UpdateColumns(
+				map[string]interface{}{
+					"title": bookUpdate.Title,
+					"author": bookUpdate.Author,
+					"page": bookUpdate.Page,
+					"publisher": bookUpdate.Publisher,
+					"quantity": bookUpdate.Quantity,
+					"updated_at": time.Now(),
+				},
+			).
+			Error
+
+	if err != nil {
+		return stacktrace.NewError("Cannot update a book")
+	}
+
+	return nil
+}
+
+func (repo *BookRepository) DeleteBook(ID uint64) (error) {
+	book := models.Book{}
+	err := repo.DB.
+			Model(&models.Book{}).
+			Where("id = ?", ID).
+			Take(&book).
+			Delete(&book).
+			Error
+
+	if err != nil {
+		return stacktrace.NewError("Cannot delete a book")
 	}
 
 	return nil

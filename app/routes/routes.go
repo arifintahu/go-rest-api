@@ -13,7 +13,10 @@ type Routes []Route
 
 var RouteList = Routes{
 	Route{"HealthCheck", "GET", "/", handlers.HealthCheck},
+
 	Route{"AddBook", "POST", "/books", handlers.AddBook},
 	Route{"ListBooks", "GET", "/books", handlers.ListBooks},
 	Route{"GetBook", "GET", "/books/{id}", handlers.GetBook},
+	Route{"UpdateBook", "PUT", "/books/{id}", handlers.UpdateBook},
+	Route{"DeleteBook", "DELETE", "/books/{id}", handlers.DeleteBook},
 }

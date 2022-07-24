@@ -49,3 +49,46 @@ func AddBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 
 	appEnv.Render.JSON(rw, http.StatusOK, book)
 }
+
+func UpdateBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	vars := mux.Vars(r)
+	id, _ := strconv.ParseUint(vars["id"], 10, 32)
+	_, err := bookRepository.GetBook(id)
+	if err != nil {
+		HandleError(rw, http.StatusNotFound, err)
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		HandleError(rw, http.StatusUnprocessableEntity, err)
+	}
+
+	book := models.Book{}
+	err = json.Unmarshal(body, &book)
+	if err != nil {
+		HandleError(rw, http.StatusUnprocessableEntity, err)
+	}
+
+	err = bookRepository.UpdateBook(id, &book)
+	if err != nil {
+		HandleError(rw, http.StatusUnprocessableEntity, err)
+	}
+
+	appEnv.Render.JSON(rw, http.StatusOK, book)
+}
+
+func DeleteBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	vars := mux.Vars(r)
+	id, _ := strconv.ParseUint(vars["id"], 10, 32)
+
+	_, err := bookRepository.GetBook(id)
+	if err != nil {
+		HandleError(rw, http.StatusNotFound, err)
+	}
+
+	err = bookRepository.DeleteBook(id)
+	if err != nil {
+		HandleError(rw, http.StatusNotFound, err)
+	}
+	appEnv.Render.JSON(rw, http.StatusOK, map[string]interface{}{})
+}

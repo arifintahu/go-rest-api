@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/arifintahu/go-rest-api/app/database"
 	"github.com/arifintahu/go-rest-api/app/models"
+	"github.com/arifintahu/go-rest-api/app/utils/database"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )

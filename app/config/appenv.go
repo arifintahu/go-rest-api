@@ -13,5 +13,6 @@ type AppEnv struct {
 	Server string
 	Port string
 	AppName string
+	IsDevelopment bool
 	DB *gorm.DB
 }

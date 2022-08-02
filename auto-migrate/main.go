@@ -5,9 +5,19 @@ import (
 	"os"
 
 	"github.com/arifintahu/go-rest-api/app/database"
-	"github.com/arifintahu/go-rest-api/app/database/migrate"
+	"github.com/arifintahu/go-rest-api/app/models"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
+
+func migrate(db *gorm.DB) error {
+	err := db.Debug().AutoMigrate(&models.Book{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func main() {
 	err := godotenv.Load()
@@ -30,21 +40,14 @@ func main() {
 		log.Fatal("Error initializing database connection")
 	}
 
-	err = migrate.Load(db)
+	err = migrate(db)
 	if err != nil {
 		log.Fatalf("Error migrate: %v", err)
 	}
 
-	if (os.Getenv("DB_SEED") == "true") {
-		err = migrate.Seed(db)
-		if err != nil {
-			log.Fatalf("Error seeder: %v", err)
-		}
-	}
-
 	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatalf("Error seeder: %v", err)
+		log.Fatalf("Error: %v", err)
 	}
 
 	sqlDB.Close()

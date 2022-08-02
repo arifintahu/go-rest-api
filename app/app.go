@@ -11,8 +11,6 @@ import (
 	"github.com/urfave/negroni"
 )
 
-const LOCAL string = "LOCAL"
-
 func StartServer(appEnv config.AppEnv) {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes.RouteList {
@@ -25,17 +23,11 @@ func StartServer(appEnv config.AppEnv) {
 			Handler(handler)
 	}
 
-	var isDevelopment = false
-
-	if appEnv.Server == LOCAL {
-		isDevelopment = true
-	}
-
 	secureMiddleware := secure.New(secure.Options{
 		// This will cause the AllowedHosts, SSLRedirect, and STSSeconds/STSIncludeSubdomains
 		// options to be ignored during development. When deploying to production,
 		// be sure to set this to false.
-		IsDevelopment: isDevelopment,
+		IsDevelopment: appEnv.IsDevelopment,
 		// AllowedHosts is a list of fully qualified domain names that are allowed (CORS)
 		AllowedHosts: []string{},
 		// If ContentTypeNosniff is true, adds the X-Content-Type-Options header
@@ -56,7 +48,7 @@ func StartServer(appEnv config.AppEnv) {
 	startupMessage = startupMessage + " in " + appEnv.Server + " mode."
 	appEnv.Logger.Println(startupMessage)
 
-	if appEnv.Server == LOCAL {
+	if appEnv.IsDevelopment {
 		n.Run("localhost:" + appEnv.Port)
 	} else {
 		n.Run(":" + appEnv.Port)

@@ -49,6 +49,7 @@ func main() {
 		Port: port,
 		AppName: appName,
 		DB: db,
+		IsDevelopment: server == "local",
 	}
 
 	app.StartServer(appEnv)

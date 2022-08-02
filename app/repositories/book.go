@@ -9,7 +9,7 @@ import (
 )
 
 type BookRepository struct {
-	DB *gorm.DB
+	db *gorm.DB
 }
 
 type BookInterface interface {
@@ -20,12 +20,13 @@ type BookInterface interface {
 	DeleteBook(id uint64) error
 }
 
-//Apply interface
-var _ BookInterface = (*BookRepository)(nil)
+func NewBookRepository(db *gorm.DB) BookInterface {
+	return &BookRepository{db}
+}
 
 func (repo *BookRepository) ListBooks() (*[]models.Book, error) {
 	books := []models.Book{}
-	err := repo.DB.
+	err := repo.db.
 			Model(&models.Book{}).
 			Limit(100).
 			Find(&books).
@@ -40,7 +41,7 @@ func (repo *BookRepository) ListBooks() (*[]models.Book, error) {
 
 func (repo *BookRepository) GetBook(ID uint64) (*models.Book, error) {
 	book := models.Book{}
-	err := repo.DB.
+	err := repo.db.
 			Model(&models.Book{}).
 			Where("id = ?", ID).
 			Take(&book).
@@ -54,7 +55,7 @@ func (repo *BookRepository) GetBook(ID uint64) (*models.Book, error) {
 }
 
 func (repo *BookRepository) AddBook(book *models.Book) (error) {
-	err := repo.DB.
+	err := repo.db.
 			Create(book).
 			Error
 
@@ -67,7 +68,7 @@ func (repo *BookRepository) AddBook(book *models.Book) (error) {
 
 func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *models.Book) (error) {
 	book := models.Book{}
-	err := repo.DB.
+	err := repo.db.
 			Model(&models.Book{}).
 			Where("id = ?", ID).
 			Take(&book).
@@ -92,7 +93,7 @@ func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *models.Book) (erro
 
 func (repo *BookRepository) DeleteBook(ID uint64) (error) {
 	book := models.Book{}
-	err := repo.DB.
+	err := repo.db.
 			Model(&models.Book{}).
 			Where("id = ?", ID).
 			Take(&book).

@@ -8,11 +8,13 @@ import (
 
 	"github.com/arifintahu/go-rest-api/app/config"
 	"github.com/arifintahu/go-rest-api/app/models"
+	"github.com/arifintahu/go-rest-api/app/repositories"
 
 	"github.com/gorilla/mux"
 )
 
 func ListBooks(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	list, err := bookRepository.ListBooks()
 	if err != nil {
 		HandleError(rw, http.StatusNotFound, err)
@@ -21,6 +23,7 @@ func ListBooks(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 }
 
 func GetBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	vars := mux.Vars(r)
 	id, _ := strconv.ParseUint(vars["id"], 10, 32)
 	book, err := bookRepository.GetBook(id)
@@ -31,6 +34,7 @@ func GetBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 }
 
 func AddBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		HandleError(rw, http.StatusUnprocessableEntity, err)
@@ -51,6 +55,7 @@ func AddBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 }
 
 func UpdateBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	vars := mux.Vars(r)
 	id, _ := strconv.ParseUint(vars["id"], 10, 32)
 	_, err := bookRepository.GetBook(id)
@@ -78,6 +83,7 @@ func UpdateBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
 }
 
 func DeleteBook(rw http.ResponseWriter, r *http.Request, appEnv config.AppEnv) {
+	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	vars := mux.Vars(r)
 	id, _ := strconv.ParseUint(vars["id"], 10, 32)
 

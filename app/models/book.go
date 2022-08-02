@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-//Book defines table structure
 type Book struct {
 	ID 			uint64 	`gorm:"primaryKey;autoIncrement" json:"id"`
 	Title     	string 	`gorm:"size:255;not null" json:"title"`
@@ -14,13 +13,4 @@ type Book struct {
 	Quantity  	uint16 	`gorm:"not null; default:0" json:"quantity"`
 	CreatedAt 	time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt 	time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
-}
-
-//BookStorage defines all databases operations
-type BookStorage interface {
-	ListBooks() (*[]Book, error)
-	GetBook(id uint64) (*Book, error)
-	AddBook(book *Book) (error)
-	UpdateBook(id uint64, bookUpdate *Book) (error)
-	DeleteBook(id uint64) error
 }

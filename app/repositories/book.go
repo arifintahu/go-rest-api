@@ -12,8 +12,16 @@ type BookRepository struct {
 	DB *gorm.DB
 }
 
-//Apply interface BookStorage
-var _ models.BookStorage = (*BookRepository)(nil)
+type BookInterface interface {
+	ListBooks() (*[]models.Book, error)
+	GetBook(id uint64) (*models.Book, error)
+	AddBook(book *models.Book) (error)
+	UpdateBook(id uint64, bookUpdate *models.Book) (error)
+	DeleteBook(id uint64) error
+}
+
+//Apply interface
+var _ BookInterface = (*BookRepository)(nil)
 
 func (repo *BookRepository) ListBooks() (*[]models.Book, error) {
 	books := []models.Book{}

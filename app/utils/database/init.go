@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type DBConfig struct {
@@ -26,5 +27,7 @@ func (dbConfig *DBConfig) InitConnection() (*gorm.DB, error) {
 		dbConfig.DbPort,
 		dbConfig.DbTimeZone,
 	)
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 }

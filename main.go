@@ -8,7 +8,7 @@ import (
 	"github.com/arifintahu/go-rest-api/app/config"
 	"github.com/joho/godotenv"
 
-	"github.com/arifintahu/go-rest-api/app/database"
+	"github.com/arifintahu/go-rest-api/app/utils/database"
 	"github.com/unrolled/render"
 )
 

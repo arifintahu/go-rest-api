@@ -6,7 +6,7 @@ import (
 
 	"github.com/arifintahu/go-rest-api/app/models"
 	"github.com/arifintahu/go-rest-api/app/utils/database"
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
 	"gorm.io/gorm"
 )
 
@@ -20,11 +20,6 @@ func migrate(db *gorm.DB) error {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	
 	dbConfig := database.DBConfig{
 		DbHost:     os.Getenv("DB_HOST"),
 		DbUser:     os.Getenv("DB_USER"),

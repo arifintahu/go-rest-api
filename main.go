@@ -6,18 +6,13 @@ import (
 
 	"github.com/arifintahu/go-rest-api/app"
 	"github.com/arifintahu/go-rest-api/app/config"
-	"github.com/joho/godotenv"
 
 	"github.com/arifintahu/go-rest-api/app/utils/database"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/unrolled/render"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	
 	var (
 		server = os.Getenv("SERVER")
 		port = os.Getenv("PORT")

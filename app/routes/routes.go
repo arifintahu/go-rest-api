@@ -1,9 +1,11 @@
 package routes
 
-import "github.com/arifintahu/go-rest-api/app/handlers"
+import (
+	"github.com/arifintahu/go-rest-api/app/controllers"
+	"github.com/arifintahu/go-rest-api/app/utils/handlers"
+)
 
 type Route struct {
-	Name        string
 	Method      string
 	Pattern     string
 	HandlerFunc handlers.HandlerFunc
@@ -12,11 +14,11 @@ type Route struct {
 type Routes []Route
 
 var RouteList = Routes{
-	Route{"HealthCheck", "GET", "/", handlers.HealthCheck},
+	Route{"GET", "/", controllers.HealthCheck},
 
-	Route{"AddBook", "POST", "/books", handlers.AddBook},
-	Route{"ListBooks", "GET", "/books", handlers.ListBooks},
-	Route{"GetBook", "GET", "/books/{id}", handlers.GetBook},
-	Route{"UpdateBook", "PUT", "/books/{id}", handlers.UpdateBook},
-	Route{"DeleteBook", "DELETE", "/books/{id}", handlers.DeleteBook},
+	Route{"POST", "/books", controllers.AddBook},
+	Route{"GET", "/books", controllers.ListBooks},
+	Route{"GET", "/books/:id", controllers.GetBook},
+	Route{"PUT", "/books/:id", controllers.UpdateBook},
+	Route{"DELETE", "/books/:id", controllers.DeleteBook},
 }

@@ -12,7 +12,7 @@ type BookRepository struct {
 	db *gorm.DB
 }
 
-type BookInterface interface {
+type IBookRepository interface {
 	ListBooks() (*[]models.Book, error)
 	GetBook(id uint64) (*models.Book, error)
 	AddBook(book *models.Book) (error)
@@ -20,7 +20,7 @@ type BookInterface interface {
 	DeleteBook(id uint64) error
 }
 
-func NewBookRepository(db *gorm.DB) BookInterface {
+func NewBookRepository(db *gorm.DB) IBookRepository {
 	return &BookRepository{db}
 }
 

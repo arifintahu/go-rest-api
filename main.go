@@ -9,7 +9,6 @@ import (
 
 	"github.com/arifintahu/go-rest-api/app/utils/database"
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/unrolled/render"
 )
 
 func main() {
@@ -20,7 +19,6 @@ func main() {
 	)
 
 	logger := log.New(os.Stdout, appName, log.LstdFlags)
-	render := render.New()
 
 	dbConfig := database.DBConfig{
 		DbHost: os.Getenv("DB_HOST"),
@@ -39,7 +37,6 @@ func main() {
 
 	appEnv := config.AppEnv{
 		Logger: logger,
-		Render: render,
 		Server: server,
 		Port: port,
 		AppName: appName,

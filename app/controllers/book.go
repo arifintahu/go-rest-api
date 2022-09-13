@@ -5,68 +5,53 @@ import (
 	"strconv"
 
 	"github.com/arifintahu/go-rest-api/app/config"
-	"github.com/arifintahu/go-rest-api/app/models"
-	"github.com/arifintahu/go-rest-api/app/repositories"
+	"github.com/arifintahu/go-rest-api/app/dto"
+	"github.com/arifintahu/go-rest-api/app/services"
 	"github.com/arifintahu/go-rest-api/app/utils/handlers"
 	"github.com/gin-gonic/gin"
 )
-
-type BookInput struct {
-	Title     	string 	`json:"title"`
-	Author    	string 	`json:"author"`
-	Page      	uint16 	`json:"page"`
-	Publisher 	string 	`json:"publisher"`
-	Quantity  	uint16 	`json:"quantity"`
-}
 
 func HealthCheck(c *gin.Context, appEnv config.AppEnv) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
 func ListBooks(c *gin.Context, appEnv config.AppEnv) {
-	bookRepository := repositories.NewBookRepository(appEnv.DB)
-	list, err := bookRepository.ListBooks()
+	s := services.NewBookService(appEnv.DB)
+	data, err := s.ListBooks()
 	if err != nil {
-		handlers.ResponseError(c, http.StatusNotFound, err)
+		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return
 	}
 	handlers.ResponseData(c, &gin.H{
 		"message": "Successfully get list books!",
-		"data": list,
+		"data": data,
 	})
 }
 
 func GetBook(c *gin.Context, appEnv config.AppEnv) {
-	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
-	book, err := bookRepository.GetBook(id)
+
+	s := services.NewBookService(appEnv.DB)
+	data, err := s.GetBook(id)
 	if err != nil {
-		handlers.ResponseError(c, http.StatusNotFound, err)
+		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return
 	}
 	handlers.ResponseData(c, &gin.H{
 		"message": "Successfully get book!",
-		"data": book,
+		"data": data,
 	})
 }
 
 func AddBook(c *gin.Context, appEnv config.AppEnv) {
-	bookRepository := repositories.NewBookRepository(appEnv.DB)
-	var input BookInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		handlers.ResponseError(c, http.StatusBadRequest, err)
+	var body dto.BookInput
+	if err := c.ShouldBindJSON(&body); err != nil {
+		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return
 	}
 
-	book := models.Book{
-		Title: input.Title,
-		Author: input.Author,
-		Page: input.Page,
-		Publisher: input.Publisher,
-		Quantity: input.Quantity,
-	}
-
-	err := bookRepository.AddBook(&book)
+	s := services.NewBookService(appEnv.DB)
+	err := s.AddBook(&body)
 	if err != nil {
 		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return
@@ -74,34 +59,20 @@ func AddBook(c *gin.Context, appEnv config.AppEnv) {
 
 	handlers.ResponseData(c, &gin.H{
 		"message": "Successfully add book!",
-		"data": book,
 	})
 }
 
 func UpdateBook(c *gin.Context, appEnv config.AppEnv) {
-	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
-	_, err := bookRepository.GetBook(id)
-	if err != nil {
-		handlers.ResponseError(c, http.StatusNotFound, err)
+	var body dto.BookInput
+	if err := c.ShouldBindJSON(&body); err != nil {
+		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return
 	}
 
-	var input BookInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		handlers.ResponseError(c, http.StatusBadRequest, err)
-		return
-	}
+	s := services.NewBookService(appEnv.DB)
+	err := s.UpdateBook(id, &body)
 
-	book := models.Book{
-		Title: input.Title,
-		Author: input.Author,
-		Page: input.Page,
-		Publisher: input.Publisher,
-		Quantity: input.Quantity,
-	}
-
-	err = bookRepository.UpdateBook(id, &book)
 	if err != nil {
 		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return
@@ -109,21 +80,14 @@ func UpdateBook(c *gin.Context, appEnv config.AppEnv) {
 
 	handlers.ResponseData(c, &gin.H{
 		"message": "Successfully update book!",
-		"data": book,
 	})
 }
 
 func DeleteBook(c *gin.Context, appEnv config.AppEnv) {
-	bookRepository := repositories.NewBookRepository(appEnv.DB)
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 32)
-
-	_, err := bookRepository.GetBook(id)
-	if err != nil {
-		handlers.ResponseError(c, http.StatusNotFound, err)
-		return
-	}
-
-	err = bookRepository.DeleteBook(id)
+	
+	s := services.NewBookService(appEnv.DB)
+	err := s.DeleteBook(id)
 	if err != nil {
 		handlers.ResponseError(c, http.StatusUnprocessableEntity, err)
 		return

@@ -17,7 +17,7 @@ type IBookRepository interface {
 	GetBook(id uint64) (*models.Book, error)
 	AddBook(book *models.Book) (error)
 	UpdateBook(id uint64, bookUpdate *models.Book) (error)
-	DeleteBook(id uint64) error
+	DeleteBook(id uint64) (error)
 }
 
 func NewBookRepository(db *gorm.DB) IBookRepository {

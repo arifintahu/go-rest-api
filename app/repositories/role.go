@@ -10,7 +10,7 @@ type RoleRepository struct {
 }
 
 type IRoleRepository interface {
-	CreateRole(role *models.Role) (error)
+	CreateRole(role *models.Role) (*models.Role, error)
 	GetRoles() (*[]models.Role, error)
 	GetRoleBySlug(slug string) (*models.Role, error)
 }
@@ -19,8 +19,9 @@ func NewRoleRepository(db *gorm.DB) IRoleRepository {
 	return &RoleRepository{db}
 }
 
-func (repo *RoleRepository) CreateRole(role *models.Role) (error) {
-	return repo.db.Create(role).Error
+func (repo *RoleRepository) CreateRole(role *models.Role) (*models.Role, error) {
+	err := repo.db.Create(role).Take(&role).Error
+	return role, err
 }
 
 func (repo *RoleRepository) GetRoles() (*[]models.Role, error) {

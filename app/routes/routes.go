@@ -21,4 +21,7 @@ var RouteList = Routes{
 	Route{"GET", "/books/:id", controllers.GetBook},
 	Route{"PUT", "/books/:id", controllers.UpdateBook},
 	Route{"DELETE", "/books/:id", controllers.DeleteBook},
+
+	Route{"POST", "/roles", controllers.CreateRole},
+	Route{"GET", "/roles", controllers.GetRoles},
 }

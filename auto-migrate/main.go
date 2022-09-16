@@ -11,7 +11,11 @@ import (
 )
 
 func migrate(db *gorm.DB) error {
-	err := db.Debug().AutoMigrate(&models.Book{})
+	err := db.Debug().AutoMigrate(
+		&models.Book{},
+		&models.Role{},
+		&models.User{},
+	)
 	if err != nil {
 		return err
 	}

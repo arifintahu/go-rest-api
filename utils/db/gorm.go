@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"fmt"
@@ -15,6 +15,24 @@ type DBConfig struct {
 	DbName string
 	DbPort string
 	DbTimeZone string
+}
+
+func NewDB(
+	DbHost string,
+	DbUser string,
+	DbPassword string,
+	DbName string,
+	DbPort string,
+	DbTimeZone string,
+) *DBConfig {
+	return &DBConfig{
+		DbHost:DbHost,
+		DbUser: DbUser,
+		DbPassword: DbPassword,
+		DbName: DbName,
+		DbPort: DbPort,
+		DbTimeZone: DbTimeZone,
+	}
 }
 
 func (dbConfig *DBConfig) InitConnection() (*gorm.DB, error) {

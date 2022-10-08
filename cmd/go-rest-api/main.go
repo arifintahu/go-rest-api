@@ -4,26 +4,21 @@ import (
 	"log"
 	"os"
 
-	"github.com/arifintahu/go-rest-api/entities"
+	"github.com/arifintahu/go-rest-api/app"
+
 	"github.com/arifintahu/go-rest-api/utils/db"
 	_ "github.com/joho/godotenv/autoload"
-	"gorm.io/gorm"
 )
 
-func migrate(db *gorm.DB) error {
-	err := db.Debug().AutoMigrate(
-		&entities.Book{},
-		&entities.Role{},
-		&entities.User{},
-	)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func main() {
+	var (
+		env = os.Getenv("ENV")
+		port = os.Getenv("PORT")
+		appName = os.Getenv("APP_NAME")
+	)
+
+	logger := log.New(os.Stdout, appName, log.LstdFlags)
+
 	gormDB := db.NewDB(
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
@@ -39,15 +34,13 @@ func main() {
 		log.Fatal("Error initializing database connection")
 	}
 
-	err = migrate(dbConn)
-	if err != nil {
-		log.Fatalf("Error migrate: %v", err)
-	}
+	application := app.NewApp(
+		logger,
+		appName,
+		dbConn,
+		env,
+		port,
+	)
 
-	sqlDB, err := dbConn.DB()
-	if err != nil {
-		log.Fatalf("Error: %v", err)
-	}
-
-	sqlDB.Close()
+	application.StartServer()
 }

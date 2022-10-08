@@ -3,7 +3,7 @@ package repositories
 import (
 	"time"
 
-	"github.com/arifintahu/go-rest-api/app/models"
+	"github.com/arifintahu/go-rest-api/entities"
 	"gorm.io/gorm"
 )
 
@@ -12,11 +12,11 @@ type UserRepository struct {
 }
 
 type IUserRepository interface {
-	CreateUser(user *models.User) (error)
-	GetUsers() (*[]models.User, error)
-	GetUserDetail(id uint64) (*models.User, error)
-	GetUserByEmail(email string) (*models.User, error)
-	UpdateUser(id uint64, user *models.User) (*models.User, error)
+	CreateUser(user *entities.User) (error)
+	GetUsers() (*[]entities.User, error)
+	GetUserDetail(id uint64) (*entities.User, error)
+	GetUserByEmail(email string) (*entities.User, error)
+	UpdateUser(id uint64, user *entities.User) (*entities.User, error)
 	DeleteUser(id uint64) (error)
 }
 
@@ -24,44 +24,44 @@ func NewUserRepository(db *gorm.DB) IUserRepository {
 	return &UserRepository{db}
 }
 
-func (repo *UserRepository) CreateUser(user *models.User) (error) {
+func (repo *UserRepository) CreateUser(user *entities.User) (error) {
 	return repo.db.Create(user).Error
 }
 
-func (repo *UserRepository) GetUsers() (*[]models.User, error) {
-	users := []models.User{}
+func (repo *UserRepository) GetUsers() (*[]entities.User, error) {
+	users := []entities.User{}
 	err := repo.db.
-			Model(&models.User{}).
+			Model(&entities.User{}).
 			Limit(100).
 			Find(&users).
 			Error
 	return &users, err
 }
 
-func (repo *UserRepository) GetUserDetail(id uint64) (*models.User, error) {
-	user := models.User{}
+func (repo *UserRepository) GetUserDetail(id uint64) (*entities.User, error) {
+	user := entities.User{}
 	err := repo.db.
-			Model(&models.Role{}).
+			Model(&entities.Role{}).
 			Where("id = ?", id).
 			Take(&user).
 			Error
 	return &user, err
 }
 
-func (repo *UserRepository) GetUserByEmail(email string) (*models.User, error) {
-	user := models.User{}
+func (repo *UserRepository) GetUserByEmail(email string) (*entities.User, error) {
+	user := entities.User{}
 	err := repo.db.
-			Model(&models.Role{}).
+			Model(&entities.Role{}).
 			Where("email = ?", email).
 			Take(&user).
 			Error
 	return &user, err
 }
 
-func (repo *UserRepository) UpdateUser(id uint64, userUpdate *models.User) (*models.User, error) {
-	user := models.User{}
+func (repo *UserRepository) UpdateUser(id uint64, userUpdate *entities.User) (*entities.User, error) {
+	user := entities.User{}
 	err := repo.db.
-			Model(&models.User{}).
+			Model(&entities.User{}).
 			Where("id = ?", id).
 			Take(&user).
 			UpdateColumns(
@@ -78,9 +78,9 @@ func (repo *UserRepository) UpdateUser(id uint64, userUpdate *models.User) (*mod
 }
 
 func (repo *UserRepository) DeleteUser(id uint64) (error) {
-	user := models.User{}
+	user := entities.User{}
 	err := repo.db.
-			Model(&models.User{}).
+			Model(&entities.User{}).
 			Where("id = ?", id).
 			Take(&user).
 			Delete(&user).

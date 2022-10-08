@@ -3,7 +3,7 @@ package repositories
 import (
 	"time"
 
-	"github.com/arifintahu/go-rest-api/app/models"
+	"github.com/arifintahu/go-rest-api/entities"
 	"github.com/palantir/stacktrace"
 	"gorm.io/gorm"
 )
@@ -13,10 +13,10 @@ type BookRepository struct {
 }
 
 type IBookRepository interface {
-	ListBooks() (*[]models.Book, error)
-	GetBook(id uint64) (*models.Book, error)
-	AddBook(book *models.Book) (error)
-	UpdateBook(id uint64, bookUpdate *models.Book) (error)
+	ListBooks() (*[]entities.Book, error)
+	GetBook(id uint64) (*entities.Book, error)
+	AddBook(book *entities.Book) (error)
+	UpdateBook(id uint64, bookUpdate *entities.Book) (error)
 	DeleteBook(id uint64) (error)
 }
 
@@ -24,37 +24,37 @@ func NewBookRepository(db *gorm.DB) IBookRepository {
 	return &BookRepository{db}
 }
 
-func (repo *BookRepository) ListBooks() (*[]models.Book, error) {
-	books := []models.Book{}
+func (repo *BookRepository) ListBooks() (*[]entities.Book, error) {
+	books := []entities.Book{}
 	err := repo.db.
-			Model(&models.Book{}).
+			Model(&entities.Book{}).
 			Limit(100).
 			Find(&books).
 			Error
 
 	if err != nil {
-		return &[]models.Book{}, stacktrace.NewError("Cannot get books")
+		return &[]entities.Book{}, stacktrace.NewError("Cannot get books")
 	}
 
 	return &books, nil
 }
 
-func (repo *BookRepository) GetBook(ID uint64) (*models.Book, error) {
-	book := models.Book{}
+func (repo *BookRepository) GetBook(ID uint64) (*entities.Book, error) {
+	book := entities.Book{}
 	err := repo.db.
-			Model(&models.Book{}).
+			Model(&entities.Book{}).
 			Where("id = ?", ID).
 			Take(&book).
 			Error
 
 	if err != nil {
-		return &models.Book{}, stacktrace.NewError("Cannot find a book")
+		return &entities.Book{}, stacktrace.NewError("Cannot find a book")
 	}
 
 	return &book, nil
 }
 
-func (repo *BookRepository) AddBook(book *models.Book) (error) {
+func (repo *BookRepository) AddBook(book *entities.Book) (error) {
 	err := repo.db.
 			Create(book).
 			Error
@@ -66,10 +66,10 @@ func (repo *BookRepository) AddBook(book *models.Book) (error) {
 	return nil
 }
 
-func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *models.Book) (error) {
-	book := models.Book{}
+func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (error) {
+	book := entities.Book{}
 	err := repo.db.
-			Model(&models.Book{}).
+			Model(&entities.Book{}).
 			Where("id = ?", ID).
 			Take(&book).
 			UpdateColumns(
@@ -92,9 +92,9 @@ func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *models.Book) (erro
 }
 
 func (repo *BookRepository) DeleteBook(ID uint64) (error) {
-	book := models.Book{}
+	book := entities.Book{}
 	err := repo.db.
-			Model(&models.Book{}).
+			Model(&entities.Book{}).
 			Where("id = ?", ID).
 			Take(&book).
 			Delete(&book).

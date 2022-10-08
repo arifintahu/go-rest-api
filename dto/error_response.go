@@ -1,18 +1,10 @@
 package dto
 
-func DefaultErrorResponse() BaseResponse {
-	return DefaultErrorResponseWithMessage("")
+func BaseErrorResponse(err error) BaseResponse {
+	return DefaultErrorResponseWithMessage(err.Error())
 }
 
 func DefaultErrorResponseWithMessage(msg string) BaseResponse {
-	return BaseResponse{
-		Success:      false,
-		MessageTitle: "Oops, something went wrong.",
-		Message:      msg,
-	}
-}
-
-func DefaultErrorInvalidDataWithMessage(msg string) BaseResponse {
 	return BaseResponse{
 		Success:      false,
 		MessageTitle: "Oops, something went wrong.",

@@ -1,10 +1,9 @@
 package role
 
 import (
-	"errors"
-
 	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
+	"github.com/arifintahu/go-rest-api/modules/role/types"
 	"github.com/arifintahu/go-rest-api/repositories"
 )
 
@@ -22,7 +21,7 @@ func (uc UseCase) CreateRole(params *dto.RoleInput) (*entities.Role, error) {
 	existRole, _ := uc.role.GetRoleBySlug(params.Slug)
 
 	if (existRole.ID != 0) {
-		return &entities.Role{}, errors.New("Role slug is exist")
+		return &entities.Role{}, types.ErrRoleSlugExist
 	}
 
 	role := entities.Role{

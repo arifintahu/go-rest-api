@@ -3,6 +3,7 @@ package book
 import (
 	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
+	"github.com/arifintahu/go-rest-api/modules/book/types"
 	"github.com/arifintahu/go-rest-api/repositories"
 )
 
@@ -43,7 +44,7 @@ func (uc UseCase) AddBook(body *dto.BookInput) error {
 func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) error {
 	_, err := uc.book.GetBook(id)
 	if err != nil {
-		return err
+		return types.ErrBookNotFound
 	}
 
 	book := entities.Book{
@@ -60,7 +61,7 @@ func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) error {
 func (uc UseCase) DeleteBook(id uint64) error {
 	_, err := uc.book.GetBook(id)
 	if err != nil {
-		return err
+		return types.ErrBookNotFound
 	}
 
 	return uc.book.DeleteBook(id)

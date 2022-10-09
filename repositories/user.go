@@ -12,7 +12,7 @@ type UserRepository struct {
 }
 
 type IUserRepository interface {
-	CreateUser(user *entities.User) (error)
+	CreateUser(user *entities.User) (*entities.User, error)
 	GetUsers() (*[]entities.User, error)
 	GetUserDetail(id uint64) (*entities.User, error)
 	GetUserByEmail(email string) (*entities.User, error)
@@ -24,8 +24,12 @@ func NewUserRepository(db *gorm.DB) IUserRepository {
 	return &UserRepository{db}
 }
 
-func (repo *UserRepository) CreateUser(user *entities.User) (error) {
-	return repo.db.Create(user).Error
+func (repo *UserRepository) CreateUser(user *entities.User) (*entities.User, error) {
+	err := repo.db.
+			Create(user).
+			Take(&user).
+			Error
+	return user, err
 }
 
 func (repo *UserRepository) GetUsers() (*[]entities.User, error) {
@@ -41,7 +45,7 @@ func (repo *UserRepository) GetUsers() (*[]entities.User, error) {
 func (repo *UserRepository) GetUserDetail(id uint64) (*entities.User, error) {
 	user := entities.User{}
 	err := repo.db.
-			Model(&entities.Role{}).
+			Model(&entities.User{}).
 			Where("id = ?", id).
 			Take(&user).
 			Error
@@ -51,7 +55,7 @@ func (repo *UserRepository) GetUserDetail(id uint64) (*entities.User, error) {
 func (repo *UserRepository) GetUserByEmail(email string) (*entities.User, error) {
 	user := entities.User{}
 	err := repo.db.
-			Model(&entities.Role{}).
+			Model(&entities.User{}).
 			Where("email = ?", email).
 			Take(&user).
 			Error
@@ -63,7 +67,6 @@ func (repo *UserRepository) UpdateUser(id uint64, userUpdate *entities.User) (*e
 	err := repo.db.
 			Model(&entities.User{}).
 			Where("id = ?", id).
-			Take(&user).
 			UpdateColumns(
 				map[string]interface{}{
 					"role_id": userUpdate.RoleID,
@@ -72,6 +75,7 @@ func (repo *UserRepository) UpdateUser(id uint64, userUpdate *entities.User) (*e
 					"updated_at": time.Now(),
 				},
 			).
+			Take(&user).
 			Error
 
 	return &user, err

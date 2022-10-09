@@ -6,6 +6,7 @@ import (
 	"github.com/arifintahu/go-rest-api/middlewares"
 	"github.com/arifintahu/go-rest-api/modules/book"
 	"github.com/arifintahu/go-rest-api/modules/role"
+	"github.com/arifintahu/go-rest-api/modules/user"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -45,6 +46,9 @@ func (app *App) StartServer() {
 
 	bookHandler := book.NewRequestHandler(app.db, app.logger)
 	bookHandler.Handle(r)
+
+	userHandler := user.NewRequestHandler(app.db, app.logger)
+	userHandler.Handle(r)
 	
 	startupMessage := "===> Starting app "+ app.name +""
 	startupMessage = startupMessage + " on port " + app.port

@@ -60,7 +60,7 @@ func (c Controller) AddBook(ctx *gin.Context) (dto.BaseResponse, error) {
 		return dto.BaseResponse{}, err
 	}
 
-	err := c.useCase.AddBook(&body)
+	data, err := c.useCase.AddBook(&body)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
@@ -69,6 +69,7 @@ func (c Controller) AddBook(ctx *gin.Context) (dto.BaseResponse, error) {
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully add book!",
+		Data: data,
 	}
 	return res, nil
 }
@@ -81,7 +82,7 @@ func (c Controller) UpdateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 		return dto.BaseResponse{}, err
 	}
 
-	err := c.useCase.UpdateBook(id, &body)
+	data, err := c.useCase.UpdateBook(id, &body)
 
 	if err != nil {
 		return dto.BaseResponse{}, err
@@ -91,6 +92,7 @@ func (c Controller) UpdateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully update book!",
+		Data: data,
 	}
 	return res, nil
 }

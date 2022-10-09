@@ -45,7 +45,7 @@ func (h *RequestHandler) createRole(ctx *gin.Context) {
 	res, err := h.controller.CreateRole(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)
@@ -55,7 +55,7 @@ func (h *RequestHandler) getRoles(ctx *gin.Context) {
 	res, err := h.controller.GetRoles(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)

@@ -48,7 +48,7 @@ func (h *RequestHandler) listBooks(ctx *gin.Context) {
 	res, err := h.controller.ListBooks(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)
@@ -58,7 +58,7 @@ func (h *RequestHandler) getBook(ctx *gin.Context) {
 	res, err := h.controller.GetBook(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)
@@ -68,7 +68,7 @@ func (h *RequestHandler) addBook(ctx *gin.Context) {
 	res, err := h.controller.AddBook(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)
@@ -78,7 +78,7 @@ func (h *RequestHandler) updateBook(ctx *gin.Context) {
 	res, err := h.controller.UpdateBook(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)
@@ -88,7 +88,7 @@ func (h *RequestHandler) deleteBook(ctx *gin.Context) {
 	res, err := h.controller.DeleteBook(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
-		h.logger.Println(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res)

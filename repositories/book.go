@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/arifintahu/go-rest-api/entities"
-	"github.com/palantir/stacktrace"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +14,8 @@ type BookRepository struct {
 type IBookRepository interface {
 	ListBooks() (*[]entities.Book, error)
 	GetBook(id uint64) (*entities.Book, error)
-	AddBook(book *entities.Book) (error)
-	UpdateBook(id uint64, bookUpdate *entities.Book) (error)
+	AddBook(book *entities.Book) (*entities.Book, error)
+	UpdateBook(id uint64, bookUpdate *entities.Book) (*entities.Book, error)
 	DeleteBook(id uint64) (error)
 }
 
@@ -32,11 +31,7 @@ func (repo *BookRepository) ListBooks() (*[]entities.Book, error) {
 			Find(&books).
 			Error
 
-	if err != nil {
-		return &[]entities.Book{}, stacktrace.NewError("Cannot get books")
-	}
-
-	return &books, nil
+	return &books, err
 }
 
 func (repo *BookRepository) GetBook(ID uint64) (*entities.Book, error) {
@@ -47,31 +42,23 @@ func (repo *BookRepository) GetBook(ID uint64) (*entities.Book, error) {
 			Take(&book).
 			Error
 
-	if err != nil {
-		return &entities.Book{}, stacktrace.NewError("Cannot find a book")
-	}
-
-	return &book, nil
+	return &book, err
 }
 
-func (repo *BookRepository) AddBook(book *entities.Book) (error) {
+func (repo *BookRepository) AddBook(book *entities.Book) (*entities.Book, error) {
 	err := repo.db.
 			Create(book).
+			Take(&book).
 			Error
 
-	if err != nil {
-		return stacktrace.NewError("Cannot add new book")
-	}
-
-	return nil
+	return book, err
 }
 
-func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (error) {
+func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (*entities.Book, error) {
 	book := entities.Book{}
 	err := repo.db.
 			Model(&entities.Book{}).
 			Where("id = ?", ID).
-			Take(&book).
 			UpdateColumns(
 				map[string]interface{}{
 					"title": bookUpdate.Title,
@@ -82,13 +69,10 @@ func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (er
 					"updated_at": time.Now(),
 				},
 			).
+			Take(&book).
 			Error
 
-	if err != nil {
-		return stacktrace.NewError("Cannot update a book")
-	}
-
-	return nil
+	return &book, err
 }
 
 func (repo *BookRepository) DeleteBook(ID uint64) (error) {
@@ -100,9 +84,5 @@ func (repo *BookRepository) DeleteBook(ID uint64) (error) {
 			Delete(&book).
 			Error
 
-	if err != nil {
-		return stacktrace.NewError("Cannot delete a book")
-	}
-
-	return nil
+	return err
 }

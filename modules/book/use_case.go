@@ -14,8 +14,8 @@ type UseCase struct {
 type IUseCase interface {
 	ListBooks() (*[]entities.Book, error)
 	GetBook(id uint64) (*entities.Book, error)
-	AddBook(body *dto.BookInput) error
-	UpdateBook(id uint64, body *dto.BookInput) error
+	AddBook(body *dto.BookInput) (*entities.Book, error)
+	UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, error)
 	DeleteBook(id uint64) error
 }
 
@@ -29,7 +29,7 @@ func (uc UseCase) GetBook(id uint64) (*entities.Book, error) {
 	return uc.book.GetBook(id)
 }
 
-func (uc UseCase) AddBook(body *dto.BookInput) error {
+func (uc UseCase) AddBook(body *dto.BookInput) (*entities.Book, error) {
 	book := entities.Book{
 		Title:     body.Title,
 		Author:    body.Author,
@@ -41,10 +41,10 @@ func (uc UseCase) AddBook(body *dto.BookInput) error {
 	return uc.book.AddBook(&book)
 }
 
-func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) error {
+func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, error) {
 	_, err := uc.book.GetBook(id)
 	if err != nil {
-		return types.ErrBookNotFound
+		return &entities.Book{}, types.ErrBookNotFound
 	}
 
 	book := entities.Book{

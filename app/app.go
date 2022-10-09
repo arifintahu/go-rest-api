@@ -12,10 +12,10 @@ import (
 
 type App struct {
 	logger *log.Logger
-	name string // application name
-	db *gorm.DB // Postgres DB
-	env string // application environment {local, staging, production}
-	port string //application running port
+	name string 	// application name
+	db *gorm.DB 	// Postgres DB connection
+	env string 		// application environment {local, staging, production}
+	port string 	// application running port
 }
 
 func NewApp(

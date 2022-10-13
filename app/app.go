@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/arifintahu/go-rest-api/middlewares"
+	"github.com/arifintahu/go-rest-api/modules/account"
 	"github.com/arifintahu/go-rest-api/modules/book"
 	"github.com/arifintahu/go-rest-api/modules/role"
 	"github.com/arifintahu/go-rest-api/modules/user"
@@ -40,6 +41,9 @@ func (app *App) StartServer() {
 	r.Use(
 		middlewares.AllowCORS(),
 	)
+
+	accountHandler := account.NewRequestHandler(app.db, app.logger)
+	accountHandler.Handle(r)
 
 	roleHandler := role.NewRequestHandler(app.db, app.logger)
 	roleHandler.Handle(r)

@@ -12,18 +12,39 @@ type Controller struct {
 }
 
 type IController interface {
-	ListBooks(ctx *gin.Context) (dto.BaseResponse, error)
-	GetBook(ctx *gin.Context) (dto.BaseResponse, error)
-	AddBook(ctx *gin.Context) (dto.BaseResponse, error)
+	CreateBook(ctx *gin.Context) (dto.BaseResponse, error)
+	GetBooks(ctx *gin.Context) (dto.BaseResponse, error)
+	GetBookDetail(ctx *gin.Context) (dto.BaseResponse, error)
 	UpdateBook(ctx *gin.Context) (dto.BaseResponse, error)
 	DeleteBook(ctx *gin.Context) (dto.BaseResponse, error)
 }
 
 var _ IController = (*Controller)(nil)
 
-func (c Controller) ListBooks(ctx *gin.Context) (dto.BaseResponse, error) {
+func (c Controller) CreateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 	var res dto.BaseResponse
-	data, err := c.useCase.ListBooks()
+	var body dto.BookInput
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		return dto.BaseResponse{}, err
+	}
+
+	data, err := c.useCase.CreateBook(&body)
+	if err != nil {
+		return dto.BaseResponse{}, err
+	}
+
+	res = dto.BaseResponse{
+		Success: true,
+		MessageTitle: "Success",
+		Message: "Successfully create book!",
+		Data: data,
+	}
+	return res, nil
+}
+
+func (c Controller) GetBooks(ctx *gin.Context) (dto.BaseResponse, error) {
+	var res dto.BaseResponse
+	data, err := c.useCase.GetBooks()
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
@@ -36,39 +57,18 @@ func (c Controller) ListBooks(ctx *gin.Context) (dto.BaseResponse, error) {
 	return res, nil
 }
 
-func (c Controller) GetBook(ctx *gin.Context) (dto.BaseResponse, error) {
+func (c Controller) GetBookDetail(ctx *gin.Context) (dto.BaseResponse, error) {
 	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
 
-	data, err := c.useCase.GetBook(id)
+	data, err := c.useCase.GetBookDetail(id)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 	res = dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
-		Message: "Successfully get book!",
-		Data: data,
-	}
-	return res, nil
-}
-
-func (c Controller) AddBook(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
-	var body dto.BookInput
-	if err := ctx.ShouldBindJSON(&body); err != nil {
-		return dto.BaseResponse{}, err
-	}
-
-	data, err := c.useCase.AddBook(&body)
-	if err != nil {
-		return dto.BaseResponse{}, err
-	}
-
-	res = dto.BaseResponse{
-		Success: true,
-		MessageTitle: "Success",
-		Message: "Successfully add book!",
+		Message: "Successfully get book detail!",
 		Data: data,
 	}
 	return res, nil

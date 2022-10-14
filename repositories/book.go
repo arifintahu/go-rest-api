@@ -12,9 +12,9 @@ type BookRepository struct {
 }
 
 type IBookRepository interface {
-	ListBooks() (*[]entities.Book, error)
-	GetBook(id uint64) (*entities.Book, error)
-	AddBook(book *entities.Book) (*entities.Book, error)
+	CreateBook(book *entities.Book) (*entities.Book, error)
+	GetBooks() (*[]entities.Book, error)
+	GetBookDetail(id uint64) (*entities.Book, error)
 	UpdateBook(id uint64, bookUpdate *entities.Book) (*entities.Book, error)
 	DeleteBook(id uint64) (error)
 }
@@ -23,7 +23,16 @@ func NewBookRepository(db *gorm.DB) IBookRepository {
 	return &BookRepository{db}
 }
 
-func (repo *BookRepository) ListBooks() (*[]entities.Book, error) {
+func (repo *BookRepository) CreateBook(book *entities.Book) (*entities.Book, error) {
+	err := repo.db.
+			Create(book).
+			Take(&book).
+			Error
+
+	return book, err
+}
+
+func (repo *BookRepository) GetBooks() (*[]entities.Book, error) {
 	books := []entities.Book{}
 	err := repo.db.
 			Model(&entities.Book{}).
@@ -34,7 +43,7 @@ func (repo *BookRepository) ListBooks() (*[]entities.Book, error) {
 	return &books, err
 }
 
-func (repo *BookRepository) GetBook(ID uint64) (*entities.Book, error) {
+func (repo *BookRepository) GetBookDetail(ID uint64) (*entities.Book, error) {
 	book := entities.Book{}
 	err := repo.db.
 			Model(&entities.Book{}).
@@ -43,15 +52,6 @@ func (repo *BookRepository) GetBook(ID uint64) (*entities.Book, error) {
 			Error
 
 	return &book, err
-}
-
-func (repo *BookRepository) AddBook(book *entities.Book) (*entities.Book, error) {
-	err := repo.db.
-			Create(book).
-			Take(&book).
-			Error
-
-	return book, err
 }
 
 func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (*entities.Book, error) {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/arifintahu/go-rest-api/dto"
+	"github.com/arifintahu/go-rest-api/middlewares"
 	"github.com/arifintahu/go-rest-api/repositories"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -36,6 +37,7 @@ func (h *RequestHandler) Handle(router *gin.Engine) {
 	}
 	r := router.Group(
 		"/roles",
+		middlewares.Authenticate(),
 	)
 	r.POST("/", h.createRole)
 	r.GET("/",h.getRoles)

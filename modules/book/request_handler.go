@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/arifintahu/go-rest-api/dto"
+	"github.com/arifintahu/go-rest-api/middlewares"
 	"github.com/arifintahu/go-rest-api/repositories"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -36,16 +37,17 @@ func (h *RequestHandler) Handle(router *gin.Engine) {
 	}
 	r := router.Group(
 		"/books",
+		middlewares.Authenticate(),
 	)
-	r.POST("/", h.addBook)
-	r.GET("/", h.listBooks)
-	r.GET("/:id", h.getBook)
+	r.POST("/", h.createBook)
+	r.GET("/", h.getBooks)
+	r.GET("/:id", h.getBookDetail)
 	r.PUT("/:id", h.updateBook)
 	r.DELETE("/:id", h.deleteBook)
 }
 
-func (h *RequestHandler) listBooks(ctx *gin.Context) {
-	res, err := h.controller.ListBooks(ctx)
+func (h *RequestHandler) createBook(ctx *gin.Context) {
+	res, err := h.controller.CreateBook(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
 		return
@@ -54,8 +56,8 @@ func (h *RequestHandler) listBooks(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (h *RequestHandler) getBook(ctx *gin.Context) {
-	res, err := h.controller.GetBook(ctx)
+func (h *RequestHandler) getBooks(ctx *gin.Context) {
+	res, err := h.controller.GetBooks(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
 		return
@@ -64,8 +66,8 @@ func (h *RequestHandler) getBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (h *RequestHandler) addBook(ctx *gin.Context) {
-	res, err := h.controller.AddBook(ctx)
+func (h *RequestHandler) getBookDetail(ctx *gin.Context) {
+	res, err := h.controller.GetBookDetail(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, dto.BaseErrorResponse(err))
 		return

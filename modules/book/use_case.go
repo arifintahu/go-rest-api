@@ -12,24 +12,16 @@ type UseCase struct {
 }
 
 type IUseCase interface {
-	ListBooks() (*[]entities.Book, error)
-	GetBook(id uint64) (*entities.Book, error)
-	AddBook(body *dto.BookInput) (*entities.Book, error)
+	CreateBook(body *dto.BookInput) (*entities.Book, error)
+	GetBooks() (*[]entities.Book, error)
+	GetBookDetail(id uint64) (*entities.Book, error)
 	UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, error)
 	DeleteBook(id uint64) error
 }
 
 var _ IUseCase = (*UseCase)(nil)
 
-func (uc UseCase) ListBooks() (*[]entities.Book, error) {
-	return uc.book.ListBooks()
-}
-
-func (uc UseCase) GetBook(id uint64) (*entities.Book, error) {
-	return uc.book.GetBook(id)
-}
-
-func (uc UseCase) AddBook(body *dto.BookInput) (*entities.Book, error) {
+func (uc UseCase) CreateBook(body *dto.BookInput) (*entities.Book, error) {
 	book := entities.Book{
 		Title:     body.Title,
 		Author:    body.Author,
@@ -38,11 +30,19 @@ func (uc UseCase) AddBook(body *dto.BookInput) (*entities.Book, error) {
 		Quantity:  body.Quantity,
 	}
 
-	return uc.book.AddBook(&book)
+	return uc.book.CreateBook(&book)
+}
+
+func (uc UseCase) GetBooks() (*[]entities.Book, error) {
+	return uc.book.GetBooks()
+}
+
+func (uc UseCase) GetBookDetail(id uint64) (*entities.Book, error) {
+	return uc.book.GetBookDetail(id)
 }
 
 func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, error) {
-	_, err := uc.book.GetBook(id)
+	_, err := uc.book.GetBookDetail(id)
 	if err != nil {
 		return &entities.Book{}, types.ErrBookNotFound
 	}
@@ -59,7 +59,7 @@ func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, er
 }
 
 func (uc UseCase) DeleteBook(id uint64) error {
-	_, err := uc.book.GetBook(id)
+	_, err := uc.book.GetBookDetail(id)
 	if err != nil {
 		return types.ErrBookNotFound
 	}

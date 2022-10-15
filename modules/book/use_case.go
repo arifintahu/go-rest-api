@@ -14,7 +14,7 @@ type UseCase struct {
 
 type IUseCase interface {
 	CreateBook(body *dto.BookInput) (*entities.Book, error)
-	GetBooks(query *dto.BookListQuery) (*[]entities.Book, error)
+	GetBooks(query *dto.BookListQuery) (*[]entities.Book, int64, error)
 	GetBookDetail(id uint64) (*entities.Book, error)
 	UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, error)
 	DeleteBook(id uint64) error
@@ -34,13 +34,24 @@ func (uc UseCase) CreateBook(body *dto.BookInput) (*entities.Book, error) {
 	return uc.book.CreateBook(&book)
 }
 
-func (uc UseCase) GetBooks(query *dto.BookListQuery) (*[]entities.Book, error) {
+func (uc UseCase) GetBooks(query *dto.BookListQuery) (*[]entities.Book, int64, error) {
 	offset, limit := pagination.OffsetAndLimit(query.Page, query.Limit)
 	params :=  dto.BookListParams{
 		Offset: offset,
 		Limit: limit,
 	}
-	return uc.book.GetBooks(&params)
+
+	books, err := uc.book.GetBooks(&params)
+	if err != nil {
+		return &[]entities.Book{}, 0, err
+	}
+
+	total, err := uc.book.GetBooksTotal()
+	if err != nil {
+		return &[]entities.Book{}, 0, err
+	}
+
+	return books, total, nil
 }
 
 func (uc UseCase) GetBookDetail(id uint64) (*entities.Book, error) {

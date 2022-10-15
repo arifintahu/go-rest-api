@@ -15,6 +15,7 @@ type BookRepository struct {
 type IBookRepository interface {
 	CreateBook(book *entities.Book) (*entities.Book, error)
 	GetBooks(params *dto.BookListParams) (*[]entities.Book, error)
+	GetBooksTotal() (int64, error)
 	GetBookDetail(id uint64) (*entities.Book, error)
 	UpdateBook(id uint64, bookUpdate *entities.Book) (*entities.Book, error)
 	DeleteBook(id uint64) (error)
@@ -43,6 +44,16 @@ func (repo *BookRepository) GetBooks(params *dto.BookListParams) (*[]entities.Bo
 			Error
 
 	return &books, err
+}
+
+func (repo *BookRepository) GetBooksTotal() (int64, error) {
+	var total int64
+	err := repo.db.
+			Model(&entities.Book{}).
+			Count(&total).
+			Error
+
+	return total, err
 }
 
 func (repo *BookRepository) GetBookDetail(ID uint64) (*entities.Book, error) {

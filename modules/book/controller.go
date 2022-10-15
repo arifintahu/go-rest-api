@@ -1,7 +1,6 @@
 package book
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/arifintahu/go-rest-api/dto"
@@ -47,9 +46,8 @@ func (c Controller) GetBooks(ctx *gin.Context) (dto.BaseResponse, error) {
 	if err := ctx.ShouldBindQuery(&query); err != nil {
 		return dto.BaseResponse{}, err
 	}
-	fmt.Println(query)
 
-	data, err := c.useCase.GetBooks(&query)
+	data, total, err := c.useCase.GetBooks(&query)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
@@ -58,6 +56,7 @@ func (c Controller) GetBooks(ctx *gin.Context) (dto.BaseResponse, error) {
 		MessageTitle: "Success",
 		Message: "Successfully get list books!",
 		Data: data,
+		Total: total,
 	}
 	return res, nil
 }

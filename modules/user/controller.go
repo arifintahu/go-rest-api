@@ -22,18 +22,17 @@ type IController interface {
 var _ IController = (*Controller)(nil)
 
 func (c Controller) CreateUser(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
-	var params dto.UserInput
-	if err := ctx.ShouldBindJSON(&params); err != nil {
+	var body dto.UserInput
+	if err := ctx.ShouldBindJSON(&body); err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	data, err := c.useCase.CreateUser(&params)
+	data, err := c.useCase.CreateUser(&body)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success:      true,
 		MessageTitle: "Success",
 		Message:      "Successfully create user!",
@@ -43,13 +42,12 @@ func (c Controller) CreateUser(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetUsers(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	data, err := c.useCase.GetUsers()
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully get list users!",
@@ -59,14 +57,13 @@ func (c Controller) GetUsers(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetUserDetail(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
 
 	data, err := c.useCase.GetUserDetail(id)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully get user detail!",
@@ -76,20 +73,19 @@ func (c Controller) GetUserDetail(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) UpdateUser(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
-	var params dto.UserUpdate
-	if err := ctx.ShouldBindJSON(&params); err != nil {
+	var body dto.UserUpdate
+	if err := ctx.ShouldBindJSON(&body); err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	data, err := c.useCase.UpdateUser(id, &params)
+	data, err := c.useCase.UpdateUser(id, &body)
 
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully update user!",
@@ -99,14 +95,13 @@ func (c Controller) UpdateUser(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) DeleteUser(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	
 	err := c.useCase.DeleteUser(id)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully delete user!",

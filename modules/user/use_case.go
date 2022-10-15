@@ -13,33 +13,33 @@ type UseCase struct {
 }
 
 type IUseCase interface {
-	CreateUser(params *dto.UserInput) (*entities.User, error)
+	CreateUser(body *dto.UserInput) (*entities.User, error)
 	GetUsers() (*[]entities.User, error)
 	GetUserDetail(id uint64) (*entities.User, error)
-	UpdateUser(id uint64, params *dto.UserUpdate) (*entities.User, error)
+	UpdateUser(id uint64, body *dto.UserUpdate) (*entities.User, error)
 	DeleteUser(id uint64) (error)
 }
 
 var _ IUseCase = (*UseCase) (nil)
 
-func (uc UseCase) CreateUser(params *dto.UserInput) (*entities.User, error) {
-	existUser, _ := uc.user.GetUserByEmail(params.Email)
+func (uc UseCase) CreateUser(body *dto.UserInput) (*entities.User, error) {
+	existUser, _ := uc.user.GetUserByEmail(body.Email)
 
 	if (existUser.ID != 0) {
 		return &entities.User{}, types.ErrUserEmailExist
 	}
 
-	hashedPassword, err := bcrypt.HashPassword(params.Password)
+	hashedPassword, err := bcrypt.HashPassword(body.Password)
 
 	if err != nil {
 		return &entities.User{}, err
 	}
 
 	user := entities.User{
-		RoleID: params.RoleID,
-		FirstName: params.FirstName,
-		LastName: params.LastName,
-		Email: params.Email,
+		RoleID: body.RoleID,
+		FirstName: body.FirstName,
+		LastName: body.LastName,
+		Email: body.Email,
 		Password: hashedPassword,
 	}
 
@@ -73,16 +73,16 @@ func (uc UseCase) GetUserDetail(id uint64) (*entities.User, error) {
 	return &mappedUser, nil
 }
 
-func (uc UseCase) UpdateUser(id uint64, params *dto.UserUpdate) (*entities.User, error) {
+func (uc UseCase) UpdateUser(id uint64, body *dto.UserUpdate) (*entities.User, error) {
 	_, err := uc.user.GetUserDetail(id)
 	if err != nil {
 		return &entities.User{}, types.ErrUserNotFound
 	}
 
 	user := entities.User{
-		RoleID: params.RoleID,
-		FirstName: params.FirstName,
-		LastName: params.LastName,
+		RoleID: body.RoleID,
+		FirstName: body.FirstName,
+		LastName: body.LastName,
 	}
 
 	return uc.user.UpdateUser(id, &user)

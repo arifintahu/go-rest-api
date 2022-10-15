@@ -3,6 +3,7 @@ package repositories
 import (
 	"time"
 
+	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"gorm.io/gorm"
 )
@@ -13,7 +14,8 @@ type UserRepository struct {
 
 type IUserRepository interface {
 	CreateUser(user *entities.User) (*entities.User, error)
-	GetUsers() (*[]entities.User, error)
+	GetUsers(params *dto.UserListParams) (*[]entities.User, error)
+	GetUsersTotal() (int64, error)
 	GetUserDetail(id uint64) (*entities.User, error)
 	GetUserByEmail(email string) (*entities.User, error)
 	UpdateUser(id uint64, user *entities.User) (*entities.User, error)
@@ -32,14 +34,25 @@ func (repo *UserRepository) CreateUser(user *entities.User) (*entities.User, err
 	return user, err
 }
 
-func (repo *UserRepository) GetUsers() (*[]entities.User, error) {
+func (repo *UserRepository) GetUsers(params *dto.UserListParams) (*[]entities.User, error) {
 	users := []entities.User{}
 	err := repo.db.
 			Model(&entities.User{}).
-			Limit(100).
+			Offset(params.Offset).
+			Limit(params.Limit).
 			Find(&users).
 			Error
 	return &users, err
+}
+
+func (repo *UserRepository) GetUsersTotal() (int64, error) {
+	var total int64
+	err := repo.db.
+			Model(&entities.User{}).
+			Count(&total).
+			Error
+
+	return total, err
 }
 
 func (repo *UserRepository) GetUserDetail(id uint64) (*entities.User, error) {

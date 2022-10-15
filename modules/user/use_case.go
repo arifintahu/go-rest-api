@@ -6,6 +6,7 @@ import (
 	"github.com/arifintahu/go-rest-api/modules/user/types"
 	"github.com/arifintahu/go-rest-api/repositories"
 	"github.com/arifintahu/go-rest-api/utils/bcrypt"
+	"github.com/arifintahu/go-rest-api/utils/pagination"
 )
 
 type UseCase struct {
@@ -14,7 +15,7 @@ type UseCase struct {
 
 type IUseCase interface {
 	CreateUser(body *dto.UserInput) (*entities.User, error)
-	GetUsers() (*[]entities.User, error)
+	GetUsers(query *dto.UserListQuery) (*[]entities.User, int64, error)
 	GetUserDetail(id uint64) (*entities.User, error)
 	UpdateUser(id uint64, body *dto.UserUpdate) (*entities.User, error)
 	DeleteUser(id uint64) (error)
@@ -46,11 +47,21 @@ func (uc UseCase) CreateUser(body *dto.UserInput) (*entities.User, error) {
 	return uc.user.CreateUser(&user)
 }
 
-func (uc UseCase) GetUsers() (*[]entities.User, error) {
-	users, err := uc.user.GetUsers()
-
+func (uc UseCase) GetUsers(query *dto.UserListQuery) (*[]entities.User, int64, error) {
+	offset, limit := pagination.OffsetAndLimit(query.Page, query.Limit)
+	params :=  dto.UserListParams{
+		Offset: offset,
+		Limit: limit,
+	}
+	
+	users, err := uc.user.GetUsers(&params)
 	if err != nil {
-		return users, err
+		return &[]entities.User{}, 0, err
+	}
+
+	total, err := uc.user.GetUsersTotal()
+	if err != nil {
+		return &[]entities.User{}, 0, err
 	}
 
 	var mappedUser []entities.User
@@ -59,7 +70,7 @@ func (uc UseCase) GetUsers() (*[]entities.User, error) {
 		mappedUser = append(mappedUser, r)
 	}
 
-	return &mappedUser, nil
+	return &mappedUser, total, nil
 }
 
 func (uc UseCase) GetUserDetail(id uint64) (*entities.User, error) {

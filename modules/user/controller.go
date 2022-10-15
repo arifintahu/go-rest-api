@@ -42,7 +42,12 @@ func (c Controller) CreateUser(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetUsers(ctx *gin.Context) (dto.BaseResponse, error) {
-	data, err := c.useCase.GetUsers()
+	var query dto.UserListQuery
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		return dto.BaseResponse{}, err
+	}
+
+	data, total, err := c.useCase.GetUsers(&query)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
@@ -52,6 +57,7 @@ func (c Controller) GetUsers(ctx *gin.Context) (dto.BaseResponse, error) {
 		MessageTitle: "Success",
 		Message: "Successfully get list users!",
 		Data: data,
+		Total: total,
 	}
 	return res, nil
 }

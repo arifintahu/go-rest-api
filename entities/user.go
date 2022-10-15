@@ -13,5 +13,5 @@ type User struct {
 	Password   	string 	`gorm:"size:255;not null" json:"password,omitempty"`
 	CreatedAt 	time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt 	time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
-	Role		Role	`json:"role,omitempty"`
+	Role		Role	`gorm:"foreignKey:RoleID" json:"role"`
 }

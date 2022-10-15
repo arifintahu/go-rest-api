@@ -37,7 +37,6 @@ func (repo *UserRepository) CreateUser(user *entities.User) (*entities.User, err
 func (repo *UserRepository) GetUsers(params *dto.UserListParams) (*[]entities.User, error) {
 	users := []entities.User{}
 	err := repo.db.
-			Model(&entities.User{}).
 			Offset(params.Offset).
 			Limit(params.Limit).
 			Find(&users).
@@ -46,9 +45,10 @@ func (repo *UserRepository) GetUsers(params *dto.UserListParams) (*[]entities.Us
 }
 
 func (repo *UserRepository) GetUsersTotal() (int64, error) {
+	user := entities.User{}
 	var total int64
 	err := repo.db.
-			Model(&entities.User{}).
+			Find(&user).
 			Count(&total).
 			Error
 
@@ -58,8 +58,9 @@ func (repo *UserRepository) GetUsersTotal() (int64, error) {
 func (repo *UserRepository) GetUserDetail(id uint64) (*entities.User, error) {
 	user := entities.User{}
 	err := repo.db.
-			Model(&entities.User{}).
-			Where("id = ?", id).
+			Joins("Role").
+			Where("users.id = ?", id).
+			Omit("users.password").
 			Take(&user).
 			Error
 	return &user, err
@@ -68,8 +69,8 @@ func (repo *UserRepository) GetUserDetail(id uint64) (*entities.User, error) {
 func (repo *UserRepository) GetUserByEmail(email string) (*entities.User, error) {
 	user := entities.User{}
 	err := repo.db.
-			Model(&entities.User{}).
-			Where("email = ?", email).
+			Joins("Role").
+			Where("users.email = ?", email).
 			Take(&user).
 			Error
 	return &user, err

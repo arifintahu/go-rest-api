@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/arifintahu/go-rest-api/entities"
 	"github.com/golang-jwt/jwt/v4"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -18,13 +19,17 @@ var (
 
 type Claims struct {
 	UserId uint64 `json:"user_id"`
+	RoleId uint16 `json:"role_id"`
+	RoleSlug string `json:"role_slug"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(userId uint64) (string, error) {
+func GenerateJWT(user *entities.User) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
-		UserId: userId,
+		UserId: user.ID,
+		RoleId: user.RoleID,
+		RoleSlug: user.Role.Slug,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -39,19 +44,19 @@ func GenerateJWT(userId uint64) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyJWT(tokenString string) (uint64, error) {
+func VerifyJWT(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
 
 	if err != nil {
-		return 0, err
+		return &Claims{}, err
 	}
 
 	if !token.Valid {
-		return 0, ErrTokenInvalid
+		return &Claims{}, ErrTokenInvalid
 	}
 
-	return claims.UserId, nil
+	return claims, nil
 }

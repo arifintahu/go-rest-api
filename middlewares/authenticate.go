@@ -23,7 +23,7 @@ func Authenticate() gin.HandlerFunc {
 			return
 		}
 
-		userId, err := jwt.VerifyJWT(tokenString)
+		claims, err := jwt.VerifyJWT(tokenString)
 
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, dto.BaseErrorResponse(err))
@@ -31,7 +31,11 @@ func Authenticate() gin.HandlerFunc {
 			return
 		}
 
-		ctx.Set("userId", userId)
+		ctx.Set("authData", map[string]interface{}{
+			"user_id":	claims.UserId,
+			"role_id":  claims.RoleId,
+			"role_slug": claims.RoleSlug,
+		})
 		ctx.Next()
 	}
 }

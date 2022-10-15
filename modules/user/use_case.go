@@ -15,7 +15,7 @@ type UseCase struct {
 
 type IUseCase interface {
 	CreateUser(body *dto.UserInput) (*entities.User, error)
-	GetUsers(query *dto.UserListQuery) (*[]entities.User, int64, error)
+	GetUsers(query *dto.UserListQuery) (*[]types.UserResponse, int64, error)
 	GetUserDetail(id uint64) (*entities.User, error)
 	UpdateUser(id uint64, body *dto.UserUpdate) (*entities.User, error)
 	DeleteUser(id uint64) (error)
@@ -47,7 +47,7 @@ func (uc UseCase) CreateUser(body *dto.UserInput) (*entities.User, error) {
 	return uc.user.CreateUser(&user)
 }
 
-func (uc UseCase) GetUsers(query *dto.UserListQuery) (*[]entities.User, int64, error) {
+func (uc UseCase) GetUsers(query *dto.UserListQuery) (*[]types.UserResponse, int64, error) {
 	offset, limit := pagination.OffsetAndLimit(query.Page, query.Limit)
 	params :=  dto.UserListParams{
 		Offset: offset,
@@ -56,21 +56,21 @@ func (uc UseCase) GetUsers(query *dto.UserListQuery) (*[]entities.User, int64, e
 	
 	users, err := uc.user.GetUsers(&params)
 	if err != nil {
-		return &[]entities.User{}, 0, err
+		return &[]types.UserResponse{}, 0, err
 	}
 
 	total, err := uc.user.GetUsersTotal()
 	if err != nil {
-		return &[]entities.User{}, 0, err
+		return &[]types.UserResponse{}, 0, err
 	}
 
-	var mappedUser []entities.User
+	var userResponses []types.UserResponse
 	for _, row := range *users {
 		r := MappingUserOutput(row)
-		mappedUser = append(mappedUser, r)
+		userResponses = append(userResponses, r)
 	}
 
-	return &mappedUser, total, nil
+	return &userResponses, total, nil
 }
 
 func (uc UseCase) GetUserDetail(id uint64) (*entities.User, error) {
@@ -80,8 +80,7 @@ func (uc UseCase) GetUserDetail(id uint64) (*entities.User, error) {
 		return user, err
 	}
 
-	mappedUser := MappingUserOutput(*user)
-	return &mappedUser, nil
+	return user, nil
 }
 
 func (uc UseCase) UpdateUser(id uint64, body *dto.UserUpdate) (*entities.User, error) {

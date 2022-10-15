@@ -17,18 +17,17 @@ type IController interface {
 var _ IController = (*Controller)(nil)
 
 func (c Controller) Login(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
-	var params dto.AccountLogin
-	if err := ctx.ShouldBindJSON(&params); err != nil {
+	var body dto.AccountLogin
+	if err := ctx.ShouldBindJSON(&body); err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	data, err := c.useCase.Login(&params)
+	data, err := c.useCase.Login(&body)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success:      true,
 		MessageTitle: "Success",
 		Message:      "Successfully login!",

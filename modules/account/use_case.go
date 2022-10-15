@@ -13,19 +13,19 @@ type UseCase struct {
 }
 
 type IUseCase interface {
-	Login(params *dto.AccountLogin) (dto.AccountLoginResponse, error)
+	Login(body *dto.AccountLogin) (dto.AccountLoginResponse, error)
 }
 
 var _ IUseCase = (*UseCase)(nil)
 
-func (uc UseCase) Login(params *dto.AccountLogin) (dto.AccountLoginResponse, error) {
-	existUser, _ := uc.user.GetUserByEmail(params.Email)
+func (uc UseCase) Login(body *dto.AccountLogin) (dto.AccountLoginResponse, error) {
+	existUser, _ := uc.user.GetUserByEmail(body.Email)
 
 	if (existUser.ID == 0) {
 		return dto.AccountLoginResponse{}, types.ErrAccountEmailNotFound
 	}
 
-	isValid := bcrypt.CheckPasswordHash(params.Password, existUser.Password)
+	isValid := bcrypt.CheckPasswordHash(body.Password, existUser.Password)
 	if !isValid {
 		return dto.AccountLoginResponse{}, types.ErrAccountPasswordInvalid
 	}

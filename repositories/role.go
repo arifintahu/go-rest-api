@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"gorm.io/gorm"
 )
@@ -11,7 +12,8 @@ type RoleRepository struct {
 
 type IRoleRepository interface {
 	CreateRole(role *entities.Role) (*entities.Role, error)
-	GetRoles() (*[]entities.Role, error)
+	GetRoles(params *dto.RoleListParams) (*[]entities.Role, error)
+	GetRolesTotal() (int64, error)
 	GetRoleBySlug(slug string) (*entities.Role, error)
 }
 
@@ -24,14 +26,25 @@ func (repo *RoleRepository) CreateRole(role *entities.Role) (*entities.Role, err
 	return role, err
 }
 
-func (repo *RoleRepository) GetRoles() (*[]entities.Role, error) {
+func (repo *RoleRepository) GetRoles(params *dto.RoleListParams) (*[]entities.Role, error) {
 	roles := []entities.Role{}
 	err := repo.db.
 			Model(&entities.Role{}).
-			Limit(100).
+			Offset(params.Offset).
+			Limit(params.Limit).
 			Find(&roles).
 			Error
 	return &roles, err
+}
+
+func (repo *RoleRepository) GetRolesTotal() (int64, error) {
+	var total int64
+	err := repo.db.
+			Model(&entities.Role{}).
+			Count(&total).
+			Error
+
+	return total, err
 }
 
 func (repo *RoleRepository) GetRoleBySlug(slug string) (*entities.Role, error) {

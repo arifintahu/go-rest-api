@@ -37,7 +37,12 @@ func (c Controller) CreateRole(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetRoles(ctx *gin.Context) (dto.BaseResponse, error) {
-	data, err := c.useCase.GetRoles()
+	var query dto.RoleListQuery
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		return dto.BaseResponse{}, err
+	}
+
+	data, total, err := c.useCase.GetRoles(&query)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
@@ -47,6 +52,7 @@ func (c Controller) GetRoles(ctx *gin.Context) (dto.BaseResponse, error) {
 		MessageTitle: "Success",
 		Message: "Successfully get list roles!",
 		Data: data,
+		Total: total,
 	}
 	return res, nil
 }

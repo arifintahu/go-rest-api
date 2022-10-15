@@ -17,18 +17,17 @@ type IController interface {
 var _ IController = (*Controller)(nil)
 
 func (c Controller) CreateRole(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
-	var params dto.RoleInput
-	if err := ctx.ShouldBindJSON(&params); err != nil {
+	var body dto.RoleInput
+	if err := ctx.ShouldBindJSON(&body); err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	data, err := c.useCase.CreateRole(&params)
+	data, err := c.useCase.CreateRole(&body)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully create role!",
@@ -38,13 +37,12 @@ func (c Controller) CreateRole(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetRoles(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	data, err := c.useCase.GetRoles()
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully get list roles!",

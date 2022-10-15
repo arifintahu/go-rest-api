@@ -11,22 +11,22 @@ type UseCase struct {
 	role repositories.IRoleRepository
 }
 type IUseCase interface {
-	CreateRole(params *dto.RoleInput) (*entities.Role, error)
+	CreateRole(body *dto.RoleInput) (*entities.Role, error)
 	GetRoles() (*[]entities.Role, error)
 }
 
 var _ IUseCase = (*UseCase)(nil)
 
-func (uc UseCase) CreateRole(params *dto.RoleInput) (*entities.Role, error) {
-	existRole, _ := uc.role.GetRoleBySlug(params.Slug)
+func (uc UseCase) CreateRole(body *dto.RoleInput) (*entities.Role, error) {
+	existRole, _ := uc.role.GetRoleBySlug(body.Slug)
 
 	if (existRole.ID != 0) {
 		return &entities.Role{}, types.ErrRoleSlugExist
 	}
 
 	role := entities.Role{
-		Name: params.Name,
-		Slug: params.Slug,
+		Name: body.Name,
+		Slug: body.Slug,
 	}
 
 	return uc.role.CreateRole(&role)

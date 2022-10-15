@@ -3,6 +3,7 @@ package repositories
 import (
 	"time"
 
+	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"gorm.io/gorm"
 )
@@ -13,7 +14,7 @@ type BookRepository struct {
 
 type IBookRepository interface {
 	CreateBook(book *entities.Book) (*entities.Book, error)
-	GetBooks() (*[]entities.Book, error)
+	GetBooks(params *dto.BookListParams) (*[]entities.Book, error)
 	GetBookDetail(id uint64) (*entities.Book, error)
 	UpdateBook(id uint64, bookUpdate *entities.Book) (*entities.Book, error)
 	DeleteBook(id uint64) (error)
@@ -32,11 +33,12 @@ func (repo *BookRepository) CreateBook(book *entities.Book) (*entities.Book, err
 	return book, err
 }
 
-func (repo *BookRepository) GetBooks() (*[]entities.Book, error) {
+func (repo *BookRepository) GetBooks(params *dto.BookListParams) (*[]entities.Book, error) {
 	books := []entities.Book{}
 	err := repo.db.
 			Model(&entities.Book{}).
-			Limit(100).
+			Offset(params.Offset).
+			Limit(params.Limit).
 			Find(&books).
 			Error
 

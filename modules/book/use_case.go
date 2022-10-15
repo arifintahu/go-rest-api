@@ -5,6 +5,7 @@ import (
 	"github.com/arifintahu/go-rest-api/entities"
 	"github.com/arifintahu/go-rest-api/modules/book/types"
 	"github.com/arifintahu/go-rest-api/repositories"
+	"github.com/arifintahu/go-rest-api/utils/pagination"
 )
 
 type UseCase struct {
@@ -13,7 +14,7 @@ type UseCase struct {
 
 type IUseCase interface {
 	CreateBook(body *dto.BookInput) (*entities.Book, error)
-	GetBooks() (*[]entities.Book, error)
+	GetBooks(query *dto.BookListQuery) (*[]entities.Book, error)
 	GetBookDetail(id uint64) (*entities.Book, error)
 	UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, error)
 	DeleteBook(id uint64) error
@@ -33,8 +34,13 @@ func (uc UseCase) CreateBook(body *dto.BookInput) (*entities.Book, error) {
 	return uc.book.CreateBook(&book)
 }
 
-func (uc UseCase) GetBooks() (*[]entities.Book, error) {
-	return uc.book.GetBooks()
+func (uc UseCase) GetBooks(query *dto.BookListQuery) (*[]entities.Book, error) {
+	offset, limit := pagination.OffsetAndLimit(query.Page, query.Limit)
+	params :=  dto.BookListParams{
+		Offset: offset,
+		Limit: limit,
+	}
+	return uc.book.GetBooks(&params)
 }
 
 func (uc UseCase) GetBookDetail(id uint64) (*entities.Book, error) {

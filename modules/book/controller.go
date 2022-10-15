@@ -1,6 +1,7 @@
 package book
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/arifintahu/go-rest-api/dto"
@@ -22,7 +23,6 @@ type IController interface {
 var _ IController = (*Controller)(nil)
 
 func (c Controller) CreateBook(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	var body dto.BookInput
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		return dto.BaseResponse{}, err
@@ -33,7 +33,7 @@ func (c Controller) CreateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully create book!",
@@ -43,12 +43,17 @@ func (c Controller) CreateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetBooks(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
-	data, err := c.useCase.GetBooks()
+	var query dto.BookListQuery
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		return dto.BaseResponse{}, err
+	}
+	fmt.Println(query)
+
+	data, err := c.useCase.GetBooks(&query)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully get list books!",
@@ -58,14 +63,13 @@ func (c Controller) GetBooks(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) GetBookDetail(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
 
 	data, err := c.useCase.GetBookDetail(id)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully get book detail!",
@@ -75,7 +79,6 @@ func (c Controller) GetBookDetail(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) UpdateBook(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	var body dto.BookInput
 	if err := ctx.ShouldBindJSON(&body); err != nil {
@@ -88,7 +91,7 @@ func (c Controller) UpdateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 		return dto.BaseResponse{}, err
 	}
 
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully update book!",
@@ -98,14 +101,13 @@ func (c Controller) UpdateBook(ctx *gin.Context) (dto.BaseResponse, error) {
 }
 
 func (c Controller) DeleteBook(ctx *gin.Context) (dto.BaseResponse, error) {
-	var res dto.BaseResponse
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 32)
 	
 	err := c.useCase.DeleteBook(id)
 	if err != nil {
 		return dto.BaseResponse{}, err
 	}
-	res = dto.BaseResponse{
+	res := dto.BaseResponse{
 		Success: true,
 		MessageTitle: "Success",
 		Message: "Successfully delete book!",

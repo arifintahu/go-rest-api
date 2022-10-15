@@ -1,6 +1,8 @@
 package user
 
 import (
+	"time"
+
 	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"github.com/arifintahu/go-rest-api/modules/user/types"
@@ -93,6 +95,7 @@ func (uc UseCase) UpdateUser(id uint64, body *dto.UserUpdate) (*entities.User, e
 		RoleID: body.RoleID,
 		FirstName: body.FirstName,
 		LastName: body.LastName,
+		UpdatedAt: time.Now(),
 	}
 
 	return uc.user.UpdateUser(id, &user)

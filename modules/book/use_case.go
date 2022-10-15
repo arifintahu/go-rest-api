@@ -1,6 +1,8 @@
 package book
 
 import (
+	"time"
+
 	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"github.com/arifintahu/go-rest-api/modules/book/types"
@@ -70,6 +72,7 @@ func (uc UseCase) UpdateBook(id uint64, body *dto.BookInput) (*entities.Book, er
 		Page:      body.Page,
 		Publisher: body.Publisher,
 		Quantity:  body.Quantity,
+		UpdatedAt: time.Now(),
 	}
 
 	return uc.book.UpdateBook(id, &book)

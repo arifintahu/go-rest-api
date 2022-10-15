@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"time"
-
 	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"gorm.io/gorm"
@@ -37,7 +35,6 @@ func (repo *BookRepository) CreateBook(book *entities.Book) (*entities.Book, err
 func (repo *BookRepository) GetBooks(params *dto.BookListParams) (*[]entities.Book, error) {
 	books := []entities.Book{}
 	err := repo.db.
-			Model(&entities.Book{}).
 			Offset(params.Offset).
 			Limit(params.Limit).
 			Find(&books).
@@ -47,9 +44,10 @@ func (repo *BookRepository) GetBooks(params *dto.BookListParams) (*[]entities.Bo
 }
 
 func (repo *BookRepository) GetBooksTotal() (int64, error) {
+	book := entities.Book{}
 	var total int64
 	err := repo.db.
-			Model(&entities.Book{}).
+			Find(&book).
 			Count(&total).
 			Error
 
@@ -59,7 +57,6 @@ func (repo *BookRepository) GetBooksTotal() (int64, error) {
 func (repo *BookRepository) GetBookDetail(ID uint64) (*entities.Book, error) {
 	book := entities.Book{}
 	err := repo.db.
-			Model(&entities.Book{}).
 			Where("id = ?", ID).
 			Take(&book).
 			Error
@@ -70,18 +67,8 @@ func (repo *BookRepository) GetBookDetail(ID uint64) (*entities.Book, error) {
 func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (*entities.Book, error) {
 	book := entities.Book{}
 	err := repo.db.
-			Model(&entities.Book{}).
 			Where("id = ?", ID).
-			UpdateColumns(
-				map[string]interface{}{
-					"title": bookUpdate.Title,
-					"author": bookUpdate.Author,
-					"page": bookUpdate.Page,
-					"publisher": bookUpdate.Publisher,
-					"quantity": bookUpdate.Quantity,
-					"updated_at": time.Now(),
-				},
-			).
+			UpdateColumns(bookUpdate).
 			Take(&book).
 			Error
 
@@ -91,9 +78,7 @@ func (repo *BookRepository) UpdateBook(ID uint64, bookUpdate *entities.Book) (*e
 func (repo *BookRepository) DeleteBook(ID uint64) (error) {
 	book := entities.Book{}
 	err := repo.db.
-			Model(&entities.Book{}).
 			Where("id = ?", ID).
-			Take(&book).
 			Delete(&book).
 			Error
 

@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"time"
-
 	"github.com/arifintahu/go-rest-api/dto"
 	"github.com/arifintahu/go-rest-api/entities"
 	"gorm.io/gorm"
@@ -79,16 +77,9 @@ func (repo *UserRepository) GetUserByEmail(email string) (*entities.User, error)
 func (repo *UserRepository) UpdateUser(id uint64, userUpdate *entities.User) (*entities.User, error) {
 	user := entities.User{}
 	err := repo.db.
-			Model(&entities.User{}).
 			Where("id = ?", id).
-			UpdateColumns(
-				map[string]interface{}{
-					"role_id": userUpdate.RoleID,
-					"first_name": userUpdate.FirstName,
-					"last_name": userUpdate.LastName,
-					"updated_at": time.Now(),
-				},
-			).
+			UpdateColumns(userUpdate).
+			Omit("password").
 			Take(&user).
 			Error
 
@@ -98,9 +89,7 @@ func (repo *UserRepository) UpdateUser(id uint64, userUpdate *entities.User) (*e
 func (repo *UserRepository) DeleteUser(id uint64) (error) {
 	user := entities.User{}
 	err := repo.db.
-			Model(&entities.User{}).
 			Where("id = ?", id).
-			Take(&user).
 			Delete(&user).
 			Error
 	return err

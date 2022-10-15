@@ -22,14 +22,16 @@ func NewRoleRepository(db *gorm.DB) IRoleRepository {
 }
 
 func (repo *RoleRepository) CreateRole(role *entities.Role) (*entities.Role, error) {
-	err := repo.db.Create(role).Take(&role).Error
+	err := repo.db.
+			Create(role).
+			Take(&role).
+			Error
 	return role, err
 }
 
 func (repo *RoleRepository) GetRoles(params *dto.RoleListParams) (*[]entities.Role, error) {
 	roles := []entities.Role{}
 	err := repo.db.
-			Model(&entities.Role{}).
 			Offset(params.Offset).
 			Limit(params.Limit).
 			Find(&roles).
@@ -38,9 +40,10 @@ func (repo *RoleRepository) GetRoles(params *dto.RoleListParams) (*[]entities.Ro
 }
 
 func (repo *RoleRepository) GetRolesTotal() (int64, error) {
+	role := entities.Role{}
 	var total int64
 	err := repo.db.
-			Model(&entities.Role{}).
+			Find(&role).
 			Count(&total).
 			Error
 
@@ -50,7 +53,6 @@ func (repo *RoleRepository) GetRolesTotal() (int64, error) {
 func (repo *RoleRepository) GetRoleBySlug(slug string) (*entities.Role, error) {
 	role := entities.Role{}
 	err := repo.db.
-			Model(&entities.Role{}).
 			Where("slug = ?", slug).
 			Take(&role).
 			Error
